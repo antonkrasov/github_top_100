@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">GithubTop100</string>
+    <string name="top_contributor">Top contributor</string>
+</resources>
