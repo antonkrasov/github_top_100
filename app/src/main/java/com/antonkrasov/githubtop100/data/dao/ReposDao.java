@@ -36,6 +36,11 @@ public abstract class ReposDao {
             "WHERE id = :id")
     public abstract void updateTopContributor(long id, String top_contributor_login, int top_contributor_contributions, String top_contributor_url);
 
+    @Query("UPDATE repos SET " +
+            "contributor_status = 1 " +
+            "WHERE id = :id")
+    public abstract void updateTopContributorError(long id);
+
     @Transaction
     public void setRepos(List<Repo> repos) {
         deleteAll();

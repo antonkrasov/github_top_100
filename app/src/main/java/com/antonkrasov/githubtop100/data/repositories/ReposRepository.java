@@ -9,6 +9,7 @@ import com.antonkrasov.githubtop100.data.dao.ReposDao;
 import com.antonkrasov.githubtop100.data.models.Contributor;
 import com.antonkrasov.githubtop100.data.models.Repo;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -46,17 +47,22 @@ public class ReposRepository {
         Disposable disposable = mReposDao.getReposToLoad(Repo.CONTRIBUTOR_STATUS_LOADING)
                 .flatMapSingle(repos -> Flowable.fromIterable(repos)
 //                        .delay(5, TimeUnit.SECONDS) // just for tests...
-                        .flatMapSingle(repo -> {
-                            Timber.d("load: %s", repo.fullName);
-                            return mGithubApiService.getContributors(repo.fullName)
-                                    .doOnSuccess(contributors -> {
-                                        // XXX: yeah, need to check if array is empty...
-                                        final Contributor topContributor = contributors.get(0);
-                                        mReposDao.updateTopContributor(repo.id, topContributor.login, topContributor.contributions, topContributor.htmlUrl);
-                                    });
-                        })
-                        .map(contributors -> contributors.get(0))
-                        .toList()
+                                .flatMapSingle(repo -> {
+                                    Timber.d("load: %s", repo.fullName);
+                                    return mGithubApiService.getContributors(repo.fullName)
+                                            .onErrorReturn(ex -> Collections.emptyList())
+                                            .doOnSuccess(contributors -> {
+                                                if (contributors.isEmpty()) {
+                                                    mReposDao.updateTopContributorError(repo.id);
+                                                } else {
+                                                    // XXX: yeah, need to check if array is empty...
+                                                    final Contributor topContributor = contributors.get(0);
+                                                    mReposDao.updateTopContributor(repo.id, topContributor.login, topContributor.contributions, topContributor.htmlUrl);
+                                                }
+                                            })
+                                            .map(contributors -> "");
+                                })
+                                .toList()
                 )
                 // need to think about the best number here, use number of available processors, etc...
                 .subscribeOn(Schedulers.from(Executors.newFixedThreadPool(3)))

@@ -47,7 +47,7 @@ public class GithubTop100App extends Application {
         if (!BuildConfig.DEBUG) {
             httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.NONE);
         } else {
-            httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+            httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
         }
 
         OkHttpClient client = new OkHttpClient.Builder()

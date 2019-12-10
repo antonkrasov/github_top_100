@@ -53,24 +53,40 @@ public class ReposAdapter extends RecyclerView.Adapter<ReposAdapter.ViewHolder> 
         holder.repoNameView.setText(repo.fullName);
         holder.starsCountView.setText(String.valueOf(repo.stargazersCount));
 
+        switch (repo.contributorStatus) {
+            case Repo.CONTRIBUTOR_STATUS_LOADING:
+                holder.topContributorProgress.setVisibility(View.VISIBLE);
+                holder.topContributorView.setVisibility(View.GONE);
+                break;
+            case Repo.CONTRIBUTOR_STATUS_ERROR:
+                holder.topContributorProgress.setVisibility(View.GONE);
+                holder.topContributorView.setVisibility(View.VISIBLE);
+
+                holder.topContributorView.setText("Couldn\'t load top contributor...");
+                break;
+            case Repo.CONTRIBUTOR_STATUS_LOADED:
+                holder.topContributorProgress.setVisibility(View.GONE);
+                holder.topContributorView.setVisibility(View.VISIBLE);
+
+                // we can use Truss or something like this here...
+                //noinspection StringBufferReplaceableByString
+                StringBuilder builder = new StringBuilder();
+                builder.append(repo.topContributorLogin);
+                builder.append(": ");
+                builder.append(repo.topContributorContributions);
+                builder.append(" contributions");
+                builder.append('\n');
+                builder.append(repo.topContributorUrl);
+
+                holder.topContributorView.setText(builder.toString());
+                break;
+        }
+
+
         if (repo.contributorStatus == Repo.CONTRIBUTOR_STATUS_LOADED) {
-            holder.topContributorProgress.setVisibility(View.GONE);
-            holder.topContributorView.setVisibility(View.VISIBLE);
 
-            // we can use Truss or something like this here...
-            //noinspection StringBufferReplaceableByString
-            StringBuilder builder = new StringBuilder();
-            builder.append(repo.topContributorLogin);
-            builder.append(": ");
-            builder.append(repo.topContributorContributions);
-            builder.append(" contributions");
-            builder.append('\n');
-            builder.append(repo.topContributorUrl);
-
-            holder.topContributorView.setText(builder.toString());
         } else if (repo.contributorStatus == Repo.CONTRIBUTOR_STATUS_LOADING) {
-            holder.topContributorProgress.setVisibility(View.VISIBLE);
-            holder.topContributorView.setVisibility(View.GONE);
+
         }
     }
 

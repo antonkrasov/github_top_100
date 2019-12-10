@@ -12,7 +12,7 @@ import retrofit2.http.Path;
 
 public interface GithubApiService {
 
-    @GET("search/repositories?sort=stars&order=desc&q=android&per_page=100")
+    @GET("search/repositories?sort=stars&order=desc&q=stars%3A%3E100&per_page=100")
     Single<ReposResponse> repos();
 
     // Had to add it just because of request rate limit, this token doesn't have access to my private
