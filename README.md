@@ -1,3 +1,7 @@
+**Youtube demo:**
+
+[![Brightwheel Android Coding Exercise Demo
+](https://img.youtube.com/vi/wNjv2gf6occ/0.jpg)](https://www.youtube.com/watch?v=wNjv2gf6occ)
 
 # Decision-making process
 
